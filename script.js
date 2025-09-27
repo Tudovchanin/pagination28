@@ -38,7 +38,6 @@ class Pagination {
   initPagination(totalPages, pivotIndex) {
 
 
-
     // Initialize page buttons
     this.pageButtons.forEach((btn, index) => {
       btn.textContent = index + 1;
@@ -72,14 +71,14 @@ class Pagination {
     };
     this.handleNumberPage = (indexClick, numberPage) => {
 
-
+      console.log(indexClick,'indexClick');
+      console.log(numberPage,'numberPage');
       const count = Math.abs(indexClick - this.pivotButtonIndex);
       this.prevPage = this.currentPage;
       this.currentPage = numberPage;
-      document.dispatchEvent(this.createPageChangeEvent('number'));
 
-  
-         // Shift left if needed
+
+      // Shift left if needed
       if (indexClick < this.pivotButtonIndex &&
         this.prevPage > this.currentPage) {
         for (let index = 0; index < count; index++) {
@@ -111,13 +110,13 @@ class Pagination {
       this.showActiveCurrentPage(this.currentPage);
     };
 
-    this.handleBackToTheStart = ()=>{
+    this.handleBackToTheStart = () => {
       this.resetToTheStart();
       document.dispatchEvent(this.createPageChangeEvent('start'));
     }
 
 
-    
+
 
     // Event listeners
     this.btnBackToTheStart.addEventListener('click', this.handleBackToTheStart);
@@ -126,23 +125,25 @@ class Pagination {
     this.pageButtons.forEach((el, index) => {
       const handler = (e) => {
         this.handleNumberPage(index, +e.target.textContent);
+        document.dispatchEvent(this.createPageChangeEvent('number'));
+
       };
       el.addEventListener('click', handler);
       this.buttonHandlers.push(handler);
     });
   }
 
-  destroyListeners(){
+  destroyListeners() {
     if (this.btnNext && this.handleBtnNext) {
       this.btnNext.removeEventListener('click', this.handleBtnNext);
-  }
-  
-  if (this.btnBackToTheStart && this.handleBackToTheStart) {
-      this.btnBackToTheStart.removeEventListener('click', this.handleBackToTheStart);
-  }
-    if(this.buttonHandlers[0]) {
+    }
 
-      this.buttonHandlers.forEach((handler, index)=> {
+    if (this.btnBackToTheStart && this.handleBackToTheStart) {
+      this.btnBackToTheStart.removeEventListener('click', this.handleBackToTheStart);
+    }
+    if (this.buttonHandlers[0]) {
+
+      this.buttonHandlers.forEach((handler, index) => {
         this.pageButtons[index].removeEventListener('click', handler)
       });
       this.buttonHandlers = [];
@@ -151,14 +152,14 @@ class Pagination {
 
   createPageChangeEvent(action) {
     return new CustomEvent('changePage', {
-        detail: {
-            page: this.currentPage,
-            oldPage: this.prevPage,
-            action: action,
-            totalPages: this.totalPages
-        }
+      detail: {
+        page: this.currentPage,
+        oldPage: this.prevPage,
+        action: action,
+        totalPages: this.totalPages
+      }
     });
-}
+  }
 
   showActiveCurrentPage() {
     this.pageButtons.forEach((btn) => {
@@ -182,7 +183,7 @@ class Pagination {
       }
     }
     this.toggleDots();
-
+    console.log(this.currentButtonValues);
   }
 
   showPrevPage() {
@@ -222,9 +223,10 @@ class Pagination {
   }
 
   setNumberPage(number) {
-    this.handleNumberPage(this.currentButtonValues.indexOf(number), number);
-    this.currentPage = number;
-    this.prevPage = this.currentPage - 1
+    for (let page = 1; page <= number; page++) {
+      this.handleNumberPage(this.currentButtonValues.indexOf(page), page);
+    }
+    
   }
 
   resetToTheStart() {
@@ -255,10 +257,16 @@ const pagination = new Pagination({
 
 
 pagination.initPagination(20, 3);
-pagination.setNumberPage(1);
+const urlSearchParams = new URLSearchParams(location.search)
+const page = urlSearchParams.get('page');
 
 
-
-document.addEventListener('changePage', (e)=> {
+document.addEventListener('changePage', (e) => {
   console.log(e.detail);
+  urlSearchParams.set('page', e.detail.page);
+  const url = `/?page=${urlSearchParams.get('page')}`
+  history.pushState({}, '', url);
 })
+
+
+pagination.setNumberPage(+page || 1);
