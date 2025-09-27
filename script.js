@@ -264,7 +264,10 @@ const page = urlSearchParams.get('page');
 document.addEventListener('changePage', (e) => {
   console.log(e.detail);
   urlSearchParams.set('page', e.detail.page);
-  const url = `/?page=${urlSearchParams.get('page')}`
+  const url = `${window.location.pathname}?page=${urlSearchParams.get('page')}`;
+  history.pushState({}, '', url);
+
+  
   history.pushState({}, '', url);
 })
 
