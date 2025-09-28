@@ -19,7 +19,7 @@ h1 {
 
 .wrapper {
   display: grid;
-  gap: 200px;
+  gap: 100px;
   justify-items: center;
   padding-top: 50px;
 }
@@ -29,7 +29,8 @@ button {
   user-select: none;
 }
 
-.pagination {
+.pagination,
+.example-1 {
   display: flex;
   align-items: center;
   gap: 10px;
@@ -69,7 +70,7 @@ button {
 }
 
 @media(hover:hover) {
-  .page-btn:not(.active-page, .dots):hover {
+  .page-btn:not(.dots):hover {
     background-color: rgb(205, 186, 183);
     border-radius: 2px;
     border: solid 1px;
@@ -119,4 +120,21 @@ button {
     font-size: 20px;
     font-weight: 700;
   }
+}
+
+
+.pag-2-page-number {
+  border-radius: 50%;
+}
+
+@media(hover:hover) {
+  .pag-2-page-number:not(.dots):hover {
+    border-radius: 50%;
+    border: solid wheat 1px;
+  }
+}
+
+
+.pag-4-page-number {
+ width: 100px;
 }

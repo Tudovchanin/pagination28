@@ -28,7 +28,7 @@ class Pagination {
   handleBackToTheStart
   buttonHandlers = [];
 
-  constructor({ $btnNext, $btnBackToTheStart, $pageButtons, $dots }) {
+  constructor({ $btnNext=null, $btnBackToTheStart, $pageButtons, $dots }) {
     this.btnNext = $btnNext;
     this.btnBackToTheStart = $btnBackToTheStart;
     this.pageButtons = $pageButtons;
@@ -49,26 +49,30 @@ class Pagination {
     this.pivotButtonValue = +this.pageButtons[this.pivotButtonIndex].textContent;
 
     // Event handlers
-    this.handleBtnNext = () => {
 
-      if (this.currentPage >= this.totalPages) return;
+    if(this.btnNext){
+      this.handleBtnNext = () => {
 
-      this.prevPage = this.currentPage;
-      ++this.currentPage;
-      document.dispatchEvent(this.createPageChangeEvent('next'));
-      this.toggleBthGoToTheStart();
-
-      if (this.currentPage <= this.pivotButtonValue) {
-        this.showActiveCurrentPage(this.currentPage);
-        return;
-      }
-
-      if (this.currentButtonValues.at(-1) === this.totalPages) {
-        this.showActiveCurrentPage(this.currentPage);
-        return;
-      }
-      this.showNextPage();
-    };
+        if (this.currentPage >= this.totalPages) return;
+  
+        this.prevPage = this.currentPage;
+        ++this.currentPage;
+        document.dispatchEvent(this.createPageChangeEvent('next'));
+        this.toggleBthGoToTheStart();
+  
+        if (this.currentPage <= this.pivotButtonValue) {
+          this.showActiveCurrentPage(this.currentPage);
+          return;
+        }
+  
+        if (this.currentButtonValues.at(-1) === this.totalPages) {
+          this.showActiveCurrentPage(this.currentPage);
+          return;
+        }
+        this.showNextPage();
+      };
+    }
+  
     this.handleNumberPage = (indexClick, numberPage) => {
 
       console.log(indexClick,'indexClick');
@@ -120,7 +124,9 @@ class Pagination {
 
     // Event listeners
     this.btnBackToTheStart.addEventListener('click', this.handleBackToTheStart);
-    this.btnNext.addEventListener("click", this.handleBtnNext);
+    if(this.btnNext) {
+      this.btnNext.addEventListener("click", this.handleBtnNext);
+    }
 
     this.pageButtons.forEach((el, index) => {
       const handler = (e) => {
@@ -170,7 +176,9 @@ class Pagination {
         btn.classList.remove("active-page");
       }
     });
-    this.toggleBtnNext();
+    if(this.btnNext) {
+      this.toggleBtnNext();
+    }
     this.toggleBthGoToTheStart();
     this.toggleDots();
   }
@@ -242,21 +250,19 @@ class Pagination {
 
 
 // Usage
-const $btnNext = document.querySelector(".next");
-const $btnBackToTheStart = document.querySelector(".start-page");
-const $pageButtons = document.querySelectorAll(".page-number");
-const $dots = document.querySelector(".dots");
 
 
-const pagination = new Pagination({
-  $btnNext,
-  $btnBackToTheStart,
-  $pageButtons,
-  $dots
-})
+const elementsPaginationMain = {
+$btnNext: document.getElementById('pag-1-next'),
+$btnBackToTheStart: document.getElementById('pag-1-start'),
+$pageButtons: document.querySelectorAll(".pag-1-page-number"),
+$dots: document.getElementById("pag-1-dots")
+}
+
+const paginationMain = new Pagination(elementsPaginationMain)
 
 
-pagination.initPagination(20, 3);
+paginationMain.initPagination(20, 3);
 const urlSearchParams = new URLSearchParams(location.search)
 const page = urlSearchParams.get('page');
 
@@ -269,5 +275,51 @@ document.addEventListener('changePage', (e) => {
   history.replaceState({}, '', url);
 })
 
+paginationMain.setNumberPage(+page || 1);
 
-pagination.setNumberPage(+page || 1);
+
+
+const elementsPaginationExample_1 = {
+  $btnNext: document.getElementById('pag-2-next'),
+  $btnBackToTheStart: document.getElementById('pag-2-start'),
+  $pageButtons: document.querySelectorAll(".pag-2-page-number"),
+  $dots: document.getElementById("pag-2-dots")
+  }
+
+  const paginationMainExample_1 = new Pagination(elementsPaginationExample_1)
+
+  paginationMainExample_1.initPagination(20, 2);
+  paginationMainExample_1.setNumberPage(1)
+
+
+
+
+const elementsPaginationExample_2 = {
+  $btnNext: document.getElementById('pag-3-next'),
+  $btnBackToTheStart: document.getElementById('pag-3-start'),
+  $pageButtons: document.querySelectorAll(".pag-3-page-number"),
+  $dots: document.getElementById("pag-3-dots")
+  }
+
+  const paginationMainExample_2 = new Pagination(elementsPaginationExample_2)
+
+  paginationMainExample_2.initPagination(20, 0);
+  paginationMainExample_2.setNumberPage(1);
+
+
+
+
+
+
+const elementsPaginationExample_3 = {
+  $btnBackToTheStart: document.getElementById('pag-4-start'),
+  $pageButtons: document.querySelectorAll(".pag-4-page-number"),
+  $dots: document.getElementById("pag-4-dots")
+  }
+
+  const paginationMainExample_3 = new Pagination(elementsPaginationExample_3)
+
+  paginationMainExample_3.initPagination(20, 1);
+  paginationMainExample_3.setNumberPage(1)
+
+
