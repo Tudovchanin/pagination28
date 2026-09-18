@@ -61,12 +61,12 @@ class Pagination {
         this.toggleBthGoToTheStart();
   
         if (this.currentPage <= this.pivotButtonValue) {
-          this.showActiveCurrentPage(this.currentPage);
+          this.showActiveCurrentPage();
           return;
         }
   
         if (this.currentButtonValues.at(-1) === this.totalPages) {
-          this.showActiveCurrentPage(this.currentPage);
+          this.showActiveCurrentPage();
           return;
         }
         this.showNextPage();
@@ -92,7 +92,7 @@ class Pagination {
 
       // Shift right if needed
       if (this.currentButtonValues.at(-1) >= this.totalPages) {
-        this.showActiveCurrentPage(numberPage);
+        this.showActiveCurrentPage();
         return;
       }
 
@@ -104,14 +104,14 @@ class Pagination {
 
         for (let index = 0; index < count; index++) {
           if (this.currentButtonValues.at(-1) >= this.totalPages) {
-            this.showActiveCurrentPage(this.currentPage);
+            this.showActiveCurrentPage();
             return;
           }
           this.showNextPage();
         }
       }
 
-      this.showActiveCurrentPage(this.currentPage);
+      this.showActiveCurrentPage();
     };
 
     this.handleBackToTheStart = () => {
@@ -244,7 +244,7 @@ class Pagination {
     this.currentButtonValues = [...this.initialButtonValues];
     this.prevPage = this.currentPage
     this.currentPage = 1;
-    this.showActiveCurrentPage(this.currentPage);
+    this.showActiveCurrentPage();
   }
 }
 
@@ -269,9 +269,20 @@ const page = urlSearchParams.get('page');
 
 
 document.addEventListener('changePage', (e) => {
-  console.log(e.detail);
-  urlSearchParams.set('page', e.detail.page);
-  const url = `${window.location.pathname}?page=${urlSearchParams.get('page')}`;
+
+  const targetPage = e.detail.page;
+if (targetPage === 1) {
+    urlSearchParams.delete('page');
+  } else {
+    urlSearchParams.set('page', targetPage);
+  }
+
+ const searchString = urlSearchParams.toString();
+  
+  const url = searchString 
+    ? `${window.location.pathname}?${searchString}` 
+    : window.location.pathname;
+  
   history.replaceState({}, '', url);
 })
 
